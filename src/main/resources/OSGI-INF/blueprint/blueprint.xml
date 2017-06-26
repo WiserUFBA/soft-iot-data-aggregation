@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	You under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0"
+	xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws" xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
+	xmlns:cxf="http://cxf.apache.org/blueprint/core"
+	xsi:schemaLocation="
+ http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+ http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd
+ http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
+ http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">
+
+	<reference id="connectedDevices" interface="br.ufba.dcc.wiser.soft_iot.mapping_devices.Controller"
+		availability="optional" />
+		
+	<reference id="localData" interface="br.ufba.dcc.wiser.soft_iot.local_storage.LocalDataController"
+		availability="optional" />
+
+	<bean id="DataAggregationTimeBean" class="br.ufba.dcc.wiser.soft_iot.data_aggregation.DataAggregationTime"
+		init-method="init">
+		<property name="fotDevices" ref="connectedDevices" />
+		<property name="localDataController" ref="localData" />
+		<property name="debugModeValue" value="${debugMode}" />
+	</bean>
+ 
+	<camelContext id="camel"
+		xmlns="http://camel.apache.org/schema/blueprint">
+		<route>
+			<from uri="timer://myTimer?period={{TimeToExecuteEnrichmentProcedure}}" />
+			<to uri="bean:H2LinkedDataControllerBean?method=buildTriples" />
+		</route>
+	</camelContext>
+  
+	<cm:property-placeholder persistent-id="br.ufba.dcc.wiser.soft_iot.semantic_enrichment"
+		update-strategy="reload">
+		<cm:default-properties>
+			<cm:property name="DataAggregationTime.status" value="true" />
+			<cm:property name="DataAggregationTime.timeInterval" value="600" />
+			<cm:property name="DataAggregationTime.function" value="{}" />
+			<cm:property name="debugMode" value="false" />
+		</cm:default-properties>
+	</cm:property-placeholder>
+
+
+</blueprint>
