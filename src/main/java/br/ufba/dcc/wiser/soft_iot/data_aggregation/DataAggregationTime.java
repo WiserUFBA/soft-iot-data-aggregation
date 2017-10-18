@@ -49,7 +49,8 @@ public class DataAggregationTime {
 			for(Sensor sensor : device.getSensors()){
 				printlnDebug("<sensor: " + sensor.getId() + " device: " + device.getId() + ">");
 				Date lastDate = this.lastDateSensor.get(device.getId() + "_" + sensor.getId());
-				List<SensorData> sensorData = localDataController.getSensorDataByAggregationStatusAndDate(device, sensor, 0, lastDate);
+				List<SensorData> sensorData = 
+						localDataController.getSensorDataByAggregationStatusAndDate(device, sensor, 0, lastDate);
 				if(!sensorData.isEmpty()){
 					aggregationByFunction(sensorData);
 					Date newLastDate = sensorData.get(sensorData.size()-1).getStartTime();
@@ -79,9 +80,10 @@ public class DataAggregationTime {
 							List<SensorData> resultList = callFunction(((AggregationFunction)aggregationFunction), aggregationListSensorData);
 							if(!resultList.isEmpty()){
 								localDataController.insertSensorDataAggregated(resultList,1);
-								printlnDebug("<start_date: " + resultList.get(0).getStartTime() 
+								/*printlnDebug("<start_date: " + resultList.get(0).getStartTime() 
 										+ " end_date: " + resultList.get(0).getEndTime()
 										+" value: " + resultList.get(0).getValue()+ " function_name: " + functionName + ">");
+										*/
 							}
 						} catch (InstantiationException e) {
 							e.printStackTrace();
