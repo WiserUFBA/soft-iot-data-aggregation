@@ -47,21 +47,24 @@ public class DataAggregationTime {
 		printlnDebug("Starting aggregation procedure...");
 		for(Device device : fotDevices.getListDevices()){
 			for(Sensor sensor : device.getSensors()){
-				printlnDebug("<sensor: " + sensor.getId() + " device: " + device.getId() + ">");
 				Date lastDate = this.lastDateSensor.get(device.getId() + "_" + sensor.getId());
+				printlnDebug("<sensor: " + sensor.getId() + " device: " + device.getId() +
+						"last_date: " + lastDate + ">");
 				List<SensorData> sensorData = 
 						localDataController.getSensorDataByAggregationStatusAndDate(device, sensor, 0, lastDate);
 				if(!sensorData.isEmpty()){
-					aggregationByFunction(sensorData);
-					Date newLastDate = sensorData.get(sensorData.size()-1).getStartTime();
-					localDataController.updateLastSensorDataAggregated(device, sensor, newLastDate);
-					this.lastDateSensor.put(device.getId() + "_" + sensor.getId(), newLastDate);
+					Date lastAggregatedDate = aggregationByFunction(sensorData);
+					if (lastAggregatedDate != null){
+						localDataController.updateLastSensorDataAggregated(device, sensor, lastAggregatedDate);
+						this.lastDateSensor.put(device.getId() + "_" + sensor.getId(), lastAggregatedDate);
+					}
 				}
 			}
 		}
 	}
 	
-	private void aggregationByFunction(List<SensorData> listSensorData){
+	private Date aggregationByFunction(List<SensorData> listSensorData){
+		Date lastDate = null;
 		for (int i=0; i < listSensorData.size(); i++){
 			SensorData sensorData = listSensorData.get(i);
 			List<SensorData> aggregationListSensorData = new ArrayList<SensorData>();
@@ -84,6 +87,7 @@ public class DataAggregationTime {
 										+ " end_date: " + resultList.get(0).getEndTime()
 										+" value: " + resultList.get(0).getValue()+ " function_name: " + functionName + ">");
 										*/
+								lastDate = resultList.get(0).getEndTime();
 							}
 						} catch (InstantiationException e) {
 							e.printStackTrace();
@@ -98,6 +102,7 @@ public class DataAggregationTime {
 				}
 			}
 		}
+		return lastDate;
 	}
 	
 	private String getFunctionNameBySensor(Sensor sensor, Device device){
