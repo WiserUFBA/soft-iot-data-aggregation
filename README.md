@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This bundle agregate IoT Semantic Data.
+Module of SOFT-IoT plataform to aggregate data in FoT-Gateway.
 
 ## Deploy to Maven Repo
 
