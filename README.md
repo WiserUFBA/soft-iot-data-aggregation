@@ -1,4 +1,4 @@
-# FoT-Gatway-Semantic-Data
+# FoT-Gateway-Semantic-Data
 
 ## Introduction
 
