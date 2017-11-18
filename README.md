@@ -18,11 +18,11 @@ mvn:br.ufba.dcc.wiser.soft_iot/fot-gateway-mapping-devices/1.0.0
 mvn:br.ufba.dcc.wiser.soft_iot/fot-gateway-local-storage/1.0.0
 bundle:install -s mvn:br.ufba.dcc.wiser.soft_iot/fot-gateway-data-aggregation/1.0.0
 ```
-FoT-Gateway-Data-Aggregation has a configuration file (*br.ufba.dcc.wiser.soft_iot.local_storage.cfg*), where is possible set information about MQTT server, default frequency to collect data sensor and the frequency of execution of procedure to clean database.
+FoT-Gateway-Data-Aggregation has a configuration file (*br.ufba.dcc.wiser.soft_iot.data_aggregation.cfg*), where is possible set information about the time fo execute aggregation procedure and configure the aggregation function for each sensor.
 
 Finally, for correct execution of module you need copy the file:
 ```
-fot-gateway-local-storage/src/main/resources/br.ufba.dcc.wiser.soft_iot.local_storage.cfg
+fot-gateway-data-aggregation/src/main/resources/br.ufba.dcc.wiser.soft_iot.data_aggregation.cfg
 ```
 to:
 ```
