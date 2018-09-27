@@ -16,7 +16,7 @@ config:property-append org.ops4j.pax.url.mvn.repositories ", https://github.com/
 config:update
 bundle:install mvn:br.ufba.dcc.wiser.soft_iot/fot-gateway-mapping-devices/1.0.0
 bundle:install mvn:br.ufba.dcc.wiser.soft_iot/fot-gateway-local-storage/1.0.0
-bundle:install -s mvn:br.ufba.dcc.wiser.soft_iot/fot-gateway-data-aggregation/1.0.0
+bundle:install mvn:br.ufba.dcc.wiser.soft_iot/fot-gateway-data-aggregation/1.0.0
 ```
 FoT-Gateway-Data-Aggregation has a configuration file (*br.ufba.dcc.wiser.soft_iot.data_aggregation.cfg*), where is possible set information about the time fo execute aggregation procedure and configure the aggregation function for each sensor.
 
