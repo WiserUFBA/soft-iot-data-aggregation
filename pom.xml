@@ -5,8 +5,8 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<name>FoT-Gateway-Data-Aggregation</name>
-	<artifactId>fot-gateway-data-aggregation</artifactId>
+	<name>SOFT-IoT-Data-Aggregation</name>
+	<artifactId>soft-iot-data-aggregation</artifactId>
 	<description>Module of SOFT-IoT plataform to aggregate data in FoT-Gateway.</description>
 	<groupId>br.ufba.dcc.wiser.soft_iot</groupId>
 	<version>1.0.0</version>
