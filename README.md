@@ -1,4 +1,4 @@
-# FoT-Gateway-Data-Aggregation
+# SOFTIoT-Data-Aggregation
 
 ## Introduction
 
@@ -6,7 +6,7 @@ Module of SOFT-IoT plataform to aggregate data in FoT-Gateway. It collects non-a
 
 ## Installation
 
-This module depends of modules [fot-gateway-mapping-devices](https://github.com/WiserUFBA/fot-gateway-mapping-devices) and [fot-gateway-local-storage](https://github.com/WiserUFBA/fot-gateway-local-storage). They need to be installed and started before FoT-Gateway-Data-Aggregation.
+This module depends of modules [soft-iot-mapping-devices](https://github.com/WiserUFBA/soft-iot-mapping-devices) and [soft-iot-local-storage](https://github.com/WiserUFBA/soft-iot-local-storage). They need to be installed and started before FoT-Gateway-Data-Aggregation.
 
 To install this bundle using our custom maven support execute the following commands in Karaf Shell:
 
@@ -14,15 +14,15 @@ To install this bundle using our custom maven support execute the following comm
 config:edit org.ops4j.pax.url.mvn 
 config:property-append org.ops4j.pax.url.mvn.repositories ", https://github.com/WiserUFBA/wiser-mvn-repo/raw/master/releases@id=wiser"
 config:update
-bundle:install mvn:br.ufba.dcc.wiser.soft_iot/fot-gateway-mapping-devices/1.0.0
-bundle:install mvn:br.ufba.dcc.wiser.soft_iot/fot-gateway-local-storage/1.0.0
-bundle:install mvn:br.ufba.dcc.wiser.soft_iot/fot-gateway-data-aggregation/1.0.0
+bundle:install mvn:br.ufba.dcc.wiser.soft_iot/soft-iot-mapping-devices/1.0.0
+bundle:install mvn:br.ufba.dcc.wiser.soft_iot/soft-iot-local-storage/1.0.0
+bundle:install mvn:br.ufba.dcc.wiser.soft_iot/soft-iot-data-aggregation/1.0.0
 ```
 FoT-Gateway-Data-Aggregation has a configuration file (*br.ufba.dcc.wiser.soft_iot.data_aggregation.cfg*), where is possible set information about the time fo execute aggregation procedure and configure the aggregation function for each sensor.
 
 Finally, for correct execution of module you need copy the file:
 ```
-fot-gateway-data-aggregation/src/main/resources/br.ufba.dcc.wiser.soft_iot.data_aggregation.cfg
+soft-iot-data-aggregation/src/main/resources/br.ufba.dcc.wiser.soft_iot.data_aggregation.cfg
 ```
 to:
 ```
