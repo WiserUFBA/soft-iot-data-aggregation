@@ -30,40 +30,49 @@ public class DataAggregationTime {
 	
 	public void init(){
 		this.lastDateSensor = new HashMap<String, Date>();
-		for(Device device : fotDevices.getListDevices()){
-			for(Sensor sensor : device.getSensors()){
-				Date lastDate = localDataController.getLastDateOfAggregatedSensorData(device, sensor);
-				if(lastDate == null){
-					lastDate = new GregorianCalendar(1900, Calendar.JANUARY, 1).getTime();
-					localDataController.createFirstLastSensorDataAggregated(device, sensor, lastDate);
-				}
-				this.lastDateSensor.put(device.getId() + "_" + sensor.getId(), lastDate);
+		JSONArray jsonArrayAggregationFunc = new JSONArray(this.strFunctionBysensor);
+		for (int i = 0; i < jsonArrayAggregationFunc.length(); i++){
+			JSONObject jsonFuncSensor = jsonArrayAggregationFunc.getJSONObject(i);
+			Device device = fotDevices.getDeviceById(jsonFuncSensor.getString("device_id"));
+			Sensor sensor = device.getSensorbySensorId(jsonFuncSensor.getString("sensor_id"));
+			String function = jsonFuncSensor.getString("function");
+			Date lastDate = localDataController.getLastDateOfAggregatedSensorData(device, sensor, function);
+			if(lastDate == null){
+				lastDate = new GregorianCalendar(1900, Calendar.JANUARY, 1).getTime();
+				localDataController.createFirstLastSensorDataAggregated(device, sensor, lastDate, function);
 			}
+			this.lastDateSensor.put(device.getId() + "_" + sensor.getId() + "_"
+					+ function, lastDate);
 		}
 	}
 
 	
 	public void aggregateData(){
 		printlnDebug("Starting aggregation procedure...");
-		for(Device device : fotDevices.getListDevices()){
-			for(Sensor sensor : device.getSensors()){
-				Date lastDate = this.lastDateSensor.get(device.getId() + "_" + sensor.getId());
-				printlnDebug("<sensor: " + sensor.getId() + " device: " + device.getId() +
-						"last_date: " + lastDate + ">");
-				List<SensorData> sensorData = 
-						localDataController.getSensorDataByAggregationStatusAndDate(device, sensor, 0, lastDate);
-				if(!sensorData.isEmpty()){
-					Date lastAggregatedDate = aggregationByFunction(sensorData);
-					if (lastAggregatedDate != null){
-						localDataController.updateLastSensorDataAggregated(device, sensor, lastAggregatedDate);
-						this.lastDateSensor.put(device.getId() + "_" + sensor.getId(), lastAggregatedDate);
-					}
+		JSONArray jsonArrayAggregationFunc = new JSONArray(this.strFunctionBysensor);
+		for (int i = 0; i < jsonArrayAggregationFunc.length(); i++){
+			JSONObject jsonFuncSensor = jsonArrayAggregationFunc.getJSONObject(i);
+			Device device = fotDevices.getDeviceById(jsonFuncSensor.getString("device_id"));
+			Sensor sensor = device.getSensorbySensorId(jsonFuncSensor.getString("sensor_id"));
+			String function = jsonFuncSensor.getString("function");
+			Date lastDate = this.lastDateSensor.get(device.getId() + "_" + sensor.getId() + "_"
+					+ function);
+			printlnDebug("<sensor: " + sensor.getId() + " device: " + device.getId() +
+					" function: "+ function + " last_date: " + lastDate + ">");
+			List<SensorData> sensorData = 
+					localDataController.getSensorDataByAggregationStatusAndDate(device, sensor, 0, lastDate);
+			if(!sensorData.isEmpty()){
+				Date lastAggregatedDate = aggregationByFunction(sensorData, function);
+				if (lastAggregatedDate != null){
+					localDataController.updateLastSensorDataAggregated(device, sensor, lastAggregatedDate, function);
+					this.lastDateSensor.put(device.getId() + "_" + sensor.getId() + "_"
+							+ function, lastAggregatedDate);
 				}
 			}
 		}
 	}
 	
-	private Date aggregationByFunction(List<SensorData> listSensorData){
+	private Date aggregationByFunction(List<SensorData> listSensorData, String functionName){
 		Date lastDate = null;
 		for (int i=0; i < listSensorData.size(); i++){
 			SensorData sensorData = listSensorData.get(i);
@@ -76,28 +85,24 @@ public class DataAggregationTime {
 					aggregationListSensorData.add(nextSensorData);
 				}else{
 					i--;
-					String functionName = getFunctionNameBySensor(nextSensorData.getSensor(), nextSensorData.getDevice());
-					if(functionName != null){
-						try {
-							Object aggregationFunction = Class.forName("br.ufba.dcc.wiser.soft_iot.data_aggregation.function." + functionName).newInstance();
-							List<SensorData> resultList = callFunction(((AggregationFunction)aggregationFunction), aggregationListSensorData);
-							if(!resultList.isEmpty()){
-								localDataController.insertSensorDataAggregated(resultList,1);
-								/*printlnDebug("<start_date: " + resultList.get(0).getStartTime() 
-										+ " end_date: " + resultList.get(0).getEndTime()
-										+" value: " + resultList.get(0).getValue()+ " function_name: " + functionName + ">");
-										*/
-								lastDate = resultList.get(0).getEndTime();
-							}
-						} catch (InstantiationException e) {
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							e.printStackTrace();
-						} catch (ClassNotFoundException e) {
-							e.printStackTrace();
+					try {
+						Object aggregationFunction = Class.forName("br.ufba.dcc.wiser.soft_iot.data_aggregation.function." + functionName).newInstance();
+						List<SensorData> resultList = callFunction(((AggregationFunction)aggregationFunction), aggregationListSensorData);
+						if(!resultList.isEmpty()){
+							localDataController.insertSensorDataAggregated(resultList,1, functionName);
+							/*printlnDebug("<start_date: " + resultList.get(0).getStartTime() 
+									+ " end_date: " + resultList.get(0).getEndTime()
+									+" value: " + resultList.get(0).getValue()+ " function_name: " + functionName + ">");
+									*/
+							lastDate = resultList.get(0).getEndTime();
 						}
-												
-					}
+					} catch (InstantiationException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					}							
 					break;
 				}
 			}

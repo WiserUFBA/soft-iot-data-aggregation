@@ -9,7 +9,7 @@
 	<artifactId>soft-iot-data-aggregation</artifactId>
 	<description>Module of SOFT-IoT plataform to aggregate data in FoT-Gateway.</description>
 	<groupId>br.ufba.dcc.wiser.soft_iot</groupId>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 	<packaging>bundle</packaging>
 
 	<properties>
@@ -85,14 +85,14 @@
 	<dependencies>
 		<dependency>
 			<groupId>br.ufba.dcc.wiser.soft_iot</groupId>
-			<artifactId>fot-gateway-mapping-devices</artifactId>
-			<version>1.0.0</version>
+			<artifactId>soft-iot-mapping-devices</artifactId>
+			<version>1.1.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>br.ufba.dcc.wiser.soft_iot</groupId>
-			<artifactId>fot-gateway-local-storage</artifactId>
-			<version>1.0.0</version>
+			<artifactId>soft-iot-local-storage</artifactId>
+			<version>1.1.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
